@@ -1,124 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import SignInPage from './sign';
-import './styles.css';
-
-
-const WORLD_NEWS = [
-  {
-    id: 1,
-    title: "Iran mourns supreme leader as US nuclear talks set to resume",
-    content: `World | 5 min read | Iran has held days of state mourning for supreme leader Ayatollah Ali Khamenei, whose death has reshaped the region and paused delicate negotiations between Tehran and Washington. Talks mediated by Qatar and Pakistan are expected to resume, covering Iran's nuclear program, sanctions relief and the future of the Strait of Hormuz, though officials on both sides caution that major sticking points remain and a fragile truce has repeatedly come under strain.`,
-    author: "Vnews World Desk",
-    image_url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 2,
-    title: "Jordan's historic first World Cup ends with heads held high",
-    content: `Sports | 4 min read | Jordan's first-ever appearance at a FIFA World Cup ended in the group stage, but not before the debutants wrote themselves into the record books. Ali Olwan struck the nation's first-ever World Cup goal against Austria, while Mousa Al-Tamari and Nizar Al-Rashdan also found the net across three narrow defeats to Austria, Algeria and eventual group winners Argentina. Drawn into a brutal Group J, Al-Nashama bowed out with pride and a foundation to build on.`,
-    author: "Vnews Sports Desk",
-    image_url: "https://images.unsplash.com/photo-1656530888466-4fb42a15be2c?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 3,
-    title: "Record-shattering heat wave grips the US over the July 4th weekend",
-    content: `Climate | 4 min read | A sprawling heat dome has trapped much of the eastern United States under dangerous temperatures over the Independence Day weekend, with forecasters warning it could be the hottest Fourth of July on record for millions. More than 185 million people were under heat alerts as cities from the Midwest to the East Coast braced for hundreds of broken records, and unusually warm overnight lows offered little relief.`,
-    author: "Vnews Science Desk",
-    image_url: "https://images.unsplash.com/photo-1582236479237-f2360f0814f6?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 4,
-    title: "Royal Jordanian opens first direct Amman-Tashkent route",
-    content: `Business | 3 min read | Royal Jordanian has launched its first direct service between Amman and Tashkent, opening a new air corridor between the Levant and Central Asia. Flying twice weekly with fuel-efficient Embraer jets from Queen Alia International Airport, the route cuts a previously one-stop journey to under five hours and is designed to draw cultural and business travelers while strengthening Amman's position as a regional transit hub.`,
-    author: "Vnews Amman Bureau",
-    image_url: "https://images.unsplash.com/photo-1752901441555-e83cbbad97a4?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 5,
-    title: "Oceans hit hottest levels ever recorded, alarming scientists",
-    content: `Science | 4 min read | Global sea-surface temperatures climbed to their highest level ever recorded for the time of year in late June, according to European climate monitors, surpassing marks set in 2023 and 2024. Scientists link the spike to a developing El Nino layered on top of long-term, human-driven warming, and warn that persistently hot oceans can fuel heavier rainfall, stronger marine heatwaves and accelerating sea-level rise.`,
-    author: "Vnews Science Desk",
-    image_url: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 6,
-    title: "Aqaba's deep-sea microbes could help defeat superbugs",
-    content: `Health | 5 min read | Researchers in Jordan say microorganisms drawn from the deep waters of the Gulf of Aqaba can produce natural compounds that kill antibiotic-resistant bacteria, a promising lead in the global fight against drug-resistant superbugs. The findings point to the Red Sea's unique marine ecosystem as a potential source for the next generation of antibiotics, one of medicine's most urgent challenges.`,
-    author: "Vnews Health Desk",
-    image_url: "https://images.unsplash.com/photo-1708649290066-5f617003b93f?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 7,
-    title: "Mount Etna erupts, lighting up the Sicilian night",
-    content: `World | 3 min read | Europe's most active volcano, Mount Etna, has erupted again, sending rivers of bright orange lava down its flanks and drawing crowds of onlookers to Sicily's slopes. Authorities monitored ash plumes for any impact on nearby air travel while volcanologists tracked the flows, a vivid reminder of the restless geology beneath the Mediterranean island.`,
-    author: "Vnews World Desk",
-    image_url: "https://images.unsplash.com/photo-1720709734276-cd14a216bcad?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 8,
-    title: "Push to revive the historic Hejaz Railway gathers pace",
-    content: `Business | 4 min read | Officials from Turkey and Saudi Arabia have signed agreements aimed at reviving the century-old Hejaz Railway, the line that once carried pilgrims and now anchors ambitions to reconnect Turkey to the Gulf through Syria, Jordan and Saudi Arabia. Backers say a modern rail link could reshape trade and travel across the region, with Jordan sitting at a strategic crossroads of the route.`,
-    author: "Vnews Amman Bureau",
-    image_url: "https://images.unsplash.com/photo-1681663112883-f6138ca162c1?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 9,
-    title: "Anthropic restores global access to its most powerful AI models",
-    content: `Tech | 3 min read | Anthropic has restored worldwide access to its most capable AI systems after the US Department of Commerce lifted export restrictions that had briefly blocked them. The controls, imposed and then rescinded within weeks, had temporarily limited availability of the company's newest frontier models, and the reversal lets developers and organizations resume using the systems for research and product work.`,
-    author: "Vnews Tech Desk",
-    image_url: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 10,
-    title: "India's Modi visits Amman to deepen economic ties",
-    content: `Politics | 3 min read | Indian Prime Minister Narendra Modi wrapped up a two-day visit to Jordan focused on investment and economic cooperation, as Amman courts new partners to accelerate growth. Talks centered on trade, technology and regional stability, underscoring Jordan's push to broaden its diplomatic and commercial relationships beyond its immediate neighborhood.`,
-    author: "Vnews Amman Bureau",
-    image_url: "https://images.unsplash.com/photo-1548138012-401d2cc42861?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 11,
-    title: "World Cup battles extreme heat as WHO teams up with FIFA",
-    content: `Sports | 3 min read | With the expanded 2026 World Cup unfolding across North America during a punishing summer, football's governing body has partnered with the World Health Organization to protect players, staff and fans from extreme heat. Cooling breaks, hydration measures and adjusted scheduling are among the steps as several host cities endure record-setting temperatures.`,
-    author: "Vnews Sports Desk",
-    image_url: "https://images.unsplash.com/photo-1656530888466-4fb42a15be2c?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 12,
-    title: "Jordan positions itself as a hub for Syria's reconstruction",
-    content: `Region | 4 min read | As its northern neighbor begins the long task of rebuilding, Jordan is positioning itself as a logistics gateway and diplomatic broker for Syria's reconstruction. Officials in Amman see opportunity in cross-border trade, transport and investment, betting that the kingdom's location and relative stability can place it at the center of the region's recovery.`,
-    author: "Vnews Amman Bureau",
-    image_url: "https://images.unsplash.com/photo-1568235222044-f87c49f85ff2?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 13,
-    title: "Russia launches massive overnight missile barrage on Kyiv",
-    content: `World | 4 min read | Russia unleashed one of its largest aerial assaults on Kyiv in weeks, striking the Ukrainian capital overnight with a mix of ballistic and cruise missiles and drones. Explosions echoed for hours as residents sheltered in subway stations, several people were killed, and emergency crews searched damaged apartment buildings at daybreak.`,
-    author: "Vnews World Desk",
-    image_url: "https://images.unsplash.com/photo-1495020689067-958852a6565d?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 14,
-    title: "Amman's water breakthroughs ease a chronic crisis",
-    content: `Environment | 5 min read | Jordan, one of the most water-scarce countries on earth, is reporting hard-won progress in easing Amman's chronic shortages after a series of infrastructure and conservation breakthroughs. Officials point to new supply projects and efficiency gains as a turning point, even as a fast-growing population and a warming climate keep water security at the top of the national agenda.`,
-    author: "Vnews Amman Bureau",
-    image_url: "https://images.unsplash.com/photo-1509390874189-d75fd22f19f7?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 15,
-    title: "Trump reports more than $1 billion from crypto ventures",
-    content: `Finance | 4 min read | A sweeping financial disclosure shows US President Donald Trump reported well over a billion dollars in income last year, much of it tied to cryptocurrency ventures. The filing has intensified scrutiny of the president's expanding business interests and the potential conflicts they pose while he holds office.`,
-    author: "Vnews Business Desk",
-    image_url: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
-  },
-];
-
-const BREAKING = [
-  { id: 0, title: "Iran mourns supreme leader as US and Iran return to nuclear talks", url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80" },
-  { id: 1, title: "Mount Etna erupts, sending lava down the Sicilian night", url: "https://images.unsplash.com/photo-1720709734276-cd14a216bcad?auto=format&fit=crop&w=1200&q=80" },
-  { id: 2, title: "Jordan makes history in its first-ever World Cup", url: "https://images.unsplash.com/photo-1656530888466-4fb42a15be2c?auto=format&fit=crop&w=1200&q=80" },
-  { id: 3, title: "Oceans reach the hottest levels ever recorded", url: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80" },
-  { id: 4, title: "Royal Jordanian links Amman to the Silk Road", url: "https://images.unsplash.com/photo-1752901441555-e83cbbad97a4?auto=format&fit=crop&w=1200&q=80" },
-];
+import axios from 'axios';
+import './styles.css'; 
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -279,8 +163,14 @@ function Dashboard() {
 }
 
 function NewsSlider() {
-  const breakingNews = BREAKING;
-
+  const breakingNews = useMemo(() => [
+    { id: 0, title: "Global Assembly Addresses Climatic Strategy", url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80" },
+    { id: 1, title: "Next-Generation Neural Frameworks Unveiled", url: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80" },
+    { id: 2, title: "Offshore Wind Power Matrix Expands Generation", url: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1200&q=80" },
+    { id: 3, title: "Orbital Vector Establishes Deep Space Array", url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" },
+    { id: 4, title: "Contemporary Heritage Museum Launches Exhibition", url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=80" },
+  ], []);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -512,58 +402,53 @@ function BookmarksSection({ currentUser, bookmarks, onToggleBookmark }) {
   );
 }
 
-const ARTICLES_PER_PAGE = 6;
-
 function CardsGrid({ searchQuery, currentUser, bookmarks, onToggleBookmark, onLoadingChange }) {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Client-side search across the curated news set (title, body, author).
-  const filteredArticles = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return WORLD_NEWS;
-    return WORLD_NEWS.filter((a) =>
-      (a.title || '').toLowerCase().includes(q) ||
-      (a.content || '').toLowerCase().includes(q) ||
-      (a.author || '').toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / ARTICLES_PER_PAGE));
-
-  // Reset to first page whenever the search term changes.
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  // Keep the current page valid if the result set shrinks.
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [currentPage, totalPages]);
+    setLoading(true);
+    onLoadingChange(true);
+    axios.get(`http://localhost:3001/articles?search=${searchQuery}&page=${currentPage}`)
+      .then(response => {
+        setArticles(response.data.data || []);
+        setTotalPages(response.data.meta?.total_pages || 1);
+        setLoading(false);
+        onLoadingChange(false);
+      })
+      .catch(error => {
+        console.error("Error fetching articles:", error);
+        setLoading(false);
+        onLoadingChange(false);
+      });
+  }, [searchQuery, currentPage, onLoadingChange]);
 
-  // Data is local, so there's no loading state. Tell the parent so the
-  // About/Trends hash-scrolling still fires correctly.
   useEffect(() => {
-    onLoadingChange(false);
-  }, [onLoadingChange]);
-
-  const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
-  const pageArticles = filteredArticles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
-
-  // Smoothly scroll back up to the grid when paging.
-  useEffect(() => {
-    if (currentPage > 1) {
+    if (!loading && articles.length > 0 && currentPage > 1) {
       const anchor = document.querySelector('.card-container');
-      if (anchor) anchor.scrollIntoView({ behavior: 'smooth' });
+      if (anchor) {
+        anchor.scrollIntoView({ behavior: 'smooth' });
+      }
     }
-  }, [currentPage]);
+  }, [currentPage, loading, articles]);
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '40px', fontSize: '18px', color: '#888' }}>Loading live stories...</div>;
+  }
 
   return (
     <div className='card-container'>
       <div className="grid">
-        {pageArticles.length === 0 ? (
+        {articles.length === 0 ? (
           <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#888' }}>No articles match your search.</p>
         ) : (
-          pageArticles.map((article, index) => {
+          articles.map((article, index) => {
             const isBookmarked = bookmarks.some(b => b.id === article.id);
             return (
               <Card 
@@ -641,10 +526,10 @@ function About() {
 
 function Trend() {
   const trends = [
-    { id: 1, tag: "#JordanWorldCup", category: "Sports", volume: "212.4K shares", velocity: "+104%", icon: "fa-futbol" },
-    { id: 2, tag: "#HeatDome", category: "Climate", volume: "168.9K shares", velocity: "+77%", icon: "fa-temperature-high" },
-    { id: 3, tag: "#EtnaEruption", category: "World", volume: "134.2K shares", velocity: "+61%", icon: "fa-mountain" },
-    { id: 4, tag: "#AqabaSuperbugs", category: "Health", volume: "58.7K shares", velocity: "+42%", icon: "fa-flask" }
+    { id: 1, tag: "#NextGenSolar", category: "Energy", volume: "142.5K shares", velocity: "+88%", icon: "fa-solar-panel" },
+    { id: 2, tag: "#AIStockSurge", category: "Finance", volume: "98.1K shares", velocity: "+64%", icon: "fa-chart-line" },
+    { id: 3, tag: "#MarsTouchdown", category: "Space", volume: "244.0K shares", velocity: "+120%", icon: "fa-rocket" },
+    { id: 4, tag: "#AmmanSummit", category: "Politics", volume: "56.3K shares", velocity: "+35%", icon: "fa-landmark" }
   ];
   return (
     <div className='trends' id='trends'>
