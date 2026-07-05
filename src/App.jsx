@@ -28,7 +28,7 @@ function Sidebar({ isOpen, onClose, currentUser, onLogout }) {
       <div className={`sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={onClose} />
       <div className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <h2>Navigation</h2>
+          <h2>Menu</h2>
           <button className="close-btn" onClick={onClose}>
             <i className="fas fa-times"></i>
           </button>
