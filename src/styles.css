@@ -348,6 +348,8 @@ body > *:nth-child(4) { animation-delay: 0.28s; }
   100% { background-position: 200% center; }
 }
 
+
+
 .navbar a {
   color: var(--text-secondary);
   font-size: 13px;

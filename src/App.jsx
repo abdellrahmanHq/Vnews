@@ -88,7 +88,7 @@ function NavBar({ isDarkMode, toggleTheme, searchQuery, setSearchQuery, onToggle
   return (
     <nav className="navbar">
       <MenuBar onToggleSidebar={onToggleSidebar} />
-      <h1>Vnews Around the World</h1>
+      <h1>Vnews Around The World</h1>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <Theme isDarkMode={isDarkMode} toggleTheme={toggleTheme}/>
       <div className='signin'>
@@ -218,7 +218,7 @@ function NewsSlider() {
   );
 }
 
-function Card({ article, currentUser, isBookmarked, onToggleBookmark, index }) {
+function Card({ article, currentUser, isBookmarked, onToggleBookmark, index, isSmall }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { title, content, author, image_url, url } = article;
   
@@ -242,21 +242,21 @@ function Card({ article, currentUser, isBookmarked, onToggleBookmark, index }) {
 
   return (
     <>
-      <div className='card' style={{ '--delay': index }}>
-        <div className="card-thumb">
+      <div className='card' style={{ '--delay': index, ...(isSmall && { display: 'flex', flexDirection: 'column', height: '100%' }) }}>
+        <div className="card-thumb" style={isSmall ? { height: '160px', minHeight: '160px' } : {}}>
           <img src={cardImage} alt="" />
           <div className="card-thumb-overlay" />
         </div>
-        <div className="card-body">
-          <div className="card-meta-row">
-            <span className="card-category-tag" data-cat={category.toLowerCase()}>{category}</span>
-            <span className="card-read-time"><i className="far fa-clock"></i> {readTime}</span>
+        <div className="card-body" style={isSmall ? { padding: '16px', display: 'flex', flexDirection: 'column', flex: '1', gap: '8px' } : {}}>
+          <div className="card-meta-row" style={isSmall ? { marginBottom: '0' } : {}}>
+            <span className="card-category-tag" data-cat={category.toLowerCase()} style={isSmall ? { fontSize: '11px', padding: '3px 8px' } : {}}>{category}</span>
+            <span className="card-read-time" style={isSmall ? { fontSize: '11px' } : {}}><i className="far fa-clock"></i> {readTime}</span>
           </div>
-          <h2>{title}</h2>
-          {author && <span className="card-author-tag">By {author}</span>}
-          <p>{displayContent}</p>
-          <div className="card-footer">
-            <button className="card-btn" onClick={() => setIsExpanded(true)}>
+          <h2 style={isSmall ? { fontSize: '1.2rem', lineHeight: '1.3', margin: '4px 0', WebkitLineClamp: '2', display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {}}>{title}</h2>
+          {author && <span className="card-author-tag" style={isSmall ? { fontSize: '11px', marginBottom: '4px' } : {}}>By {author}</span>}
+          <p style={isSmall ? { fontSize: '0.92rem', lineHeight: '1.5', WebkitLineClamp: '2', display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: '0' } : {}}>{displayContent}</p>
+          <div className="card-footer" style={isSmall ? { marginTop: 'auto', paddingTop: '8px' } : {}}>
+            <button className="card-btn" onClick={() => setIsExpanded(true)} style={isSmall ? { padding: '8px 14px', fontSize: '13px' } : {}}>
               <span>Read More</span>
             </button>
             {currentUser && (
@@ -268,7 +268,7 @@ function Card({ article, currentUser, isBookmarked, onToggleBookmark, index }) {
                   background: 'transparent',
                   border: '1px solid var(--border-default)',
                   borderRadius: 'var(--radius-md)',
-                  padding: '10px 14px',
+                  padding: isSmall ? '8px 12px' : '10px 14px',
                   cursor: 'pointer',
                   color: isBookmarked ? 'var(--accent)' : 'var(--text-muted)',
                   transition: 'all 0.24s ease'
@@ -310,37 +310,27 @@ function BookmarksSection({ currentUser, bookmarks, onToggleBookmark }) {
   if (!currentUser) return null;
 
   return (
-    <div className="bookmarks-section">
-      <div className="bookmarks-header">
-        <h2><i className="fas fa-bookmark"></i> Your Saved Stories ({bookmarks.length})</h2>
+    <div className="bookmarks-section" style={{ padding: '0 40px', marginTop: '40px' }}>
+      <div className="bookmarks-header" style={{ marginBottom: '24px' }}>
+        <h2><i className="fas fa-bookmark" style={{ color: 'var(--accent-color)', marginRight: '10px' }}></i> Your Saved Stories ({bookmarks.length})</h2>
       </div>
       {bookmarks.length === 0 ? (
-        <div className="bookmarks-empty">
-          <p>Click the bookmark icon on any article card below to save it here.</p>
+        <div className="bookmarks-empty" style={{ padding: '30px', textAlign: 'center', background: 'var(--card-bg)', borderRadius: '16px', border: '1px dashed var(--card-border)' }}>
+          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Click the bookmark icon on any article card below to save it here.</p>
         </div>
       ) : (
-        <div className="bookmarks-mini-grid">
-          {bookmarks.map((article) => {
-            let category = "News";
-            let displayContent = article.content || "";
-            if (article.content && article.content.includes('|')) {
-              const parts = article.content.split('|');
-              category = parts[0]?.trim() || "News";
-              displayContent = parts.slice(2).join('|').trim();
-            }
-            return (
-              <div key={article.id} className="bookmark-mini-card">
-                <div>
-                  <span className="mini-card-tag">{category}</span>
-                  <h3>{article.title}</h3>
-                  <p>{displayContent.substring(0, 80)}...</p>
-                </div>
-                <button onClick={() => onToggleBookmark(article)} className="mini-card-remove">
-                  <i className="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            );
-          })}
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+          {bookmarks.map((article, index) => (
+            <Card 
+              key={`bookmark-${article.id}`} 
+              article={article}
+              currentUser={currentUser}
+              isBookmarked={true}
+              onToggleBookmark={onToggleBookmark}
+              index={index} 
+              isSmall={true}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -414,6 +404,15 @@ function CardsGrid({ searchQuery, currentUser, bookmarks, onToggleBookmark, onLo
           <button 
             className="pagination-btn"
             disabled={currentPage === 1}
+            onClick={() => setCurrentPage(1)}
+            aria-label="First page"
+          >
+            <i className="fas fa-angle-double-left"></i>
+          </button>
+
+          <button 
+            className="pagination-btn"
+            disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
             aria-label="Previous page"
           >
@@ -431,6 +430,15 @@ function CardsGrid({ searchQuery, currentUser, bookmarks, onToggleBookmark, onLo
             aria-label="Next page"
           >
             <i className="fas fa-chevron-right"></i>
+          </button>
+
+          <button 
+            className="pagination-btn"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(totalPages)}
+            aria-label="Last page"
+          >
+            <i className="fas fa-angle-double-right"></i>
           </button>
         </div>
       )}
@@ -572,12 +580,12 @@ function MainContent({ searchQuery, currentUser, bookmarks, onToggleBookmark }) 
   return (
     <>
       <Dashboard />
+      <NewsSlider />
       <BookmarksSection 
         currentUser={currentUser} 
         bookmarks={bookmarks} 
         onToggleBookmark={onToggleBookmark} 
       />
-      <NewsSlider />
       <CardsGrid 
         searchQuery={searchQuery}
         currentUser={currentUser}
@@ -597,6 +605,10 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
+
+  useEffect(() => {
+    document.title = "Vnews";
+  }, []);
 
   const syncUserSession = () => {
     const storedUser = localStorage.getItem('user');
