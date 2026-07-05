@@ -220,7 +220,7 @@ function NewsSlider() {
 
 function Card({ article, currentUser, isBookmarked, onToggleBookmark, index }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { title, content, author, image_url, url, id } = article;
+  const { title, content, author, image_url, url } = article;
   
   let category = "News";
   let readTime = "3 min read";
@@ -233,62 +233,7 @@ function Card({ article, currentUser, isBookmarked, onToggleBookmark, index }) {
     displayContent = parts.slice(2).join('|').trim();
   }
 
-  const cardImage = useMemo(() => {
-    if (image_url) return image_url;
-    if (url) return url;
-
-    const lowerTitle = (title || "").toLowerCase();
-    const lowerCategory = category.toLowerCase();
-
-    if (lowerTitle.includes("amman") || lowerTitle.includes("conference")) {
-      return "https://images.unsplash.com/photo-1548138012-401d2cc42861?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("jerash") || lowerTitle.includes("festival")) {
-      return "https://images.unsplash.com/photo-1626244674751-64bb4b553655?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("aqaba") || lowerTitle.includes("port")) {
-      return "https://images.unsplash.com/photo-1568235222044-f87c49f85ff2?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("rum") || lowerTitle.includes("wadirum")) {
-      return "https://images.unsplash.com/photo-1582236479237-f2360f0814f6?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("petra") || lowerTitle.includes("night")) {
-      return "https://images.unsplash.com/photo-1585551016625-a13740992cfa?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("wind") || lowerTitle.includes("solar") || lowerCategory.includes("energy")) {
-      return "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("neural") || lowerTitle.includes("ai") || lowerCategory.includes("tech")) {
-      return "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("space") || lowerTitle.includes("mars") || lowerCategory.includes("space")) {
-      return "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("economic") || lowerTitle.includes("stock") || lowerCategory.includes("finance")) {
-      return "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80";
-    }
-    if (lowerTitle.includes("museum") || lowerTitle.includes("art")) {
-      return "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=800&q=80";
-    }
-
-    const imagePool = [
-      "https://images.unsplash.com/photo-1495020689067-958852a6565d?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1584515901107-9979657b6873?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1444653389962-8149286c578a?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80"
-    ];
-
-    const stableId = id ? parseInt(id, 10) : 0;
-    const targetIndex = (stableId || index) % imagePool.length;
-    return imagePool[targetIndex];
-  }, [image_url, url, title, category, index, id]);
+  const cardImage = image_url || url || "https://images.unsplash.com/photo-1495020689067-958852a6565d?auto=format&fit=crop&w=800&q=80";
 
   useEffect(() => {
     document.body.style.overflow = isExpanded ? 'hidden' : 'unset';
@@ -559,7 +504,7 @@ function Trend() {
   );
 }
 
-function Footer() {
+function Footer({ currentUser }) {
   return (
     <div className='footer' id='footer'>
       <div className='company-description'>
@@ -570,7 +515,7 @@ function Footer() {
         <h3>Links</h3>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/sign">Sign In</Link></li>
+          {!currentUser && <li><Link to="/sign">Sign In</Link></li>}
           <li><Link to="/#trends">Trends</Link></li>
           <li><Link to="/#About">About Us</Link></li>
         </ul>
@@ -648,7 +593,7 @@ function MainContent({ searchQuery, currentUser, bookmarks, onToggleBookmark }) 
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
@@ -729,7 +674,7 @@ export default function App() {
           } />
           <Route path='/sign' element={<SignInPage />} />
         </Routes>
-        <Footer />
+        <Footer currentUser={currentUser} />
       </div>
     </BrowserRouter>
   );

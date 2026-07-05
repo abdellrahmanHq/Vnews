@@ -2117,9 +2117,7 @@ body > *:nth-child(4) { animation-delay: 0.28s; }
   .navbar h1 { font-size:17px; }
 }
 
-/* Burger icon — three crisp rounded bars drawn in pure CSS, so it ALWAYS
-   shows even if the icon font hasn't loaded. Add class "active" or "open"
-   to .menu-icon (from your JS) to morph it into an X. */
+
 .menu-icon i {
   display: block;
   position: relative;
