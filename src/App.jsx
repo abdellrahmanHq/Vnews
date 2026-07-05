@@ -74,8 +74,6 @@ function SearchBar({ searchQuery, setSearchQuery }) {
   );
 }
 
-let $T = 24;
-
 function Theme({ isDarkMode, toggleTheme }) {
   return (
     <div className='theme' onClick={toggleTheme}>
@@ -126,7 +124,9 @@ function NavBar({ isDarkMode, toggleTheme, searchQuery, setSearchQuery, onToggle
 
 function Dashboard() {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
-  const [activeUsers, setActiveUsers] = useState(172);
+  const [registeredCount, setRegisteredCount] = useState(0);
+  const [ammanTemp, setAmmanTemp] = useState(null);
+  const [weatherCode, setWeatherCode] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -134,28 +134,58 @@ function Dashboard() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-  
+
   useEffect(() => {
-    const trafficTimer = setInterval(() => {
-      setActiveUsers(prev => prev + Math.floor(Math.random() * 7) - 3);
-    }, 2500);
-    return () => clearInterval(trafficTimer);
+    axios.get('http://localhost:3001/users/count')
+      .then(response => {
+        setRegisteredCount(response.data.count || 0);
+      })
+      .catch(error => {
+        console.error("Error fetching registered user metrics:", error);
+      });
+
+    axios.get('https://api.open-meteo.com/v1/forecast?latitude=31.9552&longitude=35.9450&current_weather=true')
+      .then(response => {
+        if (response.data?.current_weather) {
+          setAmmanTemp(Math.round(response.data.current_weather.temperature));
+          setWeatherCode(response.data.current_weather.weathercode);
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching weather telemetry:", error);
+      });
   }, []);
+
+  const getWeatherIcon = (code) => {
+    if (code === null) return "fa-cloud-sun";
+    if (code === 0) return "fa-sun";
+    if (code >= 1 && code <= 3) return "fa-cloud-sun";
+    if (code === 45 || code === 48) return "fa-smog";
+    if (code >= 51 && code <= 55) return "fa-cloud-rain";
+    if (code >= 61 && code <= 65) return "fa-cloud-showers-heavy";
+    if (code >= 71 && code <= 77) return "fa-snowflake";
+    if (code >= 80 && code <= 82) return "fa-cloud-showers-heavy";
+    if (code >= 85 && code <= 86) return "fa-snowflake";
+    if (code >= 95) return "fa-bolt";
+    return "fa-cloud-sun";
+  };
 
   return (
     <div className='dashboard-container'>
       <div className='dashboard-grid'>
         <div className='dash-card'>
-          <h3><i className="fas fa-users"></i> Live Visitors</h3>
-          <p className='dash-stat'>{activeUsers}</p>
+          <h3><i className="fas fa-users"></i> Registered Users</h3>
+          <p className='dash-stat'>{registeredCount}</p>
         </div>
         <div className='dash-card'>
           <h3><i className="fas fa-clock"></i> Local Time</h3>
           <p className='dash-stat'>{time}</p>
         </div>
         <div className='dash-card'>
-          <h3><i className="fas fa-cloud-sun"></i> Amman Weather</h3>
-          <p className='dash-stat'>{ $T } ℃ </p>
+          <h3>
+            <i key={weatherCode} className={`fas ${getWeatherIcon(weatherCode)}`}></i> Amman Weather
+          </h3>
+          <p className='dash-stat'>{ammanTemp !== null ? `${ammanTemp} ℃` : '-- ℃'}</p>
         </div>
       </div>
     </div>
@@ -525,7 +555,7 @@ function Footer({ currentUser }) {
           <li><Link to="/">Home</Link></li>
           {!currentUser && <li><Link to="/sign">Sign In</Link></li>}
           <li><Link to="/#trends">Trends</Link></li>
-          <li><Link to="/#About">About Us</Link></li>
+          <li><Link to="/#About Us">About Us</Link></li>
         </ul>
       </div>
       <div className='Contact'>
